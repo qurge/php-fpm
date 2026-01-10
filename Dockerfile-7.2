@@ -1,0 +1,81 @@
+#
+#--------------------------------------------------------------------------
+# Image Setup
+#--------------------------------------------------------------------------
+#
+
+FROM php:7.2-fpm
+
+# Set Environment Variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+# Install PHP extensions
+RUN install-php-extensions @fix_letsencrypt @composer \
+    bcmath \
+    event \
+    intl \
+    gd \
+    gettext \
+    mcrypt \
+    mysqli \
+    pdo_mysql \
+    pcntl \
+    redis \
+    sockets \
+    zip
+
+###########################################################################
+# Set Timezone
+###########################################################################
+ARG TZ=Asia/Shanghai
+ENV TZ=${TZ}
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+##########################################################################
+# ImageMagick:
+###########################################################################
+ARG INSTALL_IMAGEMAGICK=true
+ARG IMAGEMAGICK_VERSION=latest
+ENV IMAGEMAGICK_VERSION=${IMAGEMAGICK_VERSION}
+
+RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
+    apt-get update && \
+    apt-get install -yqq libmagickwand-dev imagemagick && \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+      cd /tmp && \
+      if [ ${IMAGEMAGICK_VERSION} = "latest" ]; then \
+        git clone https://github.com/Imagick/imagick; \
+      else \
+        git clone --branch ${IMAGEMAGICK_VERSION} https://github.com/Imagick/imagick; \
+      fi && \
+      cd imagick && \
+      phpize && \
+      ./configure && \
+      make && \
+      make install && \
+      rm -r /tmp/imagick; \
+    else \
+      pecl install imagick; \
+    fi && \
+    docker-php-ext-enable imagick; \
+    php -m | grep -q 'imagick' \
+;fi
+
+###########################################################################
+# xlswriter:
+###########################################################################
+ARG INSTALL_XLSWRITER=true
+RUN set -eux; \
+    if [ ${INSTALL_XLSWRITER} = true ]; then \
+      # Install Php xlswriter Extension \
+      if [ $(php -r "echo PHP_MAJOR_VERSION;") != "5" ]; then \
+          install-php-extensions xlswriter  && \
+          php -m | grep -q 'xlswriter'; \
+      else \
+          echo "PHP Extension for xlswriter is not supported for PHP 5.0";\
+      fi \
+    ;fi
+

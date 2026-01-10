@@ -1,0 +1,54 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: '**'
+    tags: '**'
+  schedule:
+    - cron: 0 0 * * 6
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version: ["5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images:
+            qurge/php-fpm
+          flavor: |
+            suffix=-${{ matrix.php_version }}
+          tags: |
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        if: ${{ (github.repository == 'mtgq/php-fpm') && (github.ref == 'refs/heads/main') }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile-${{ matrix.php_version }}
+          platforms: linux/amd64, linux/arm/v7, linux/arm/v6, linux/arm64
+          push: ${{ (github.event_name != 'pull_request') && (github.repository == 'mtgq/php-fpm') && (github.ref == 'refs/heads/main') }}
+          tags: ${{ steps.meta.outputs.tags }}
