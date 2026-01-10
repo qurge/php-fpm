@@ -49,6 +49,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: Dockerfile-${{ matrix.php_version }}
-          platforms: linux/amd64, linux/arm/v7, linux/arm/v6, linux/arm64
+          platforms: linux/amd64, linux/arm/v7, linux/arm64
           push: ${{ (github.event_name != 'pull_request') && (github.repository == 'mtgq/php-fpm') && (github.ref == 'refs/heads/main') }}
           tags: ${{ steps.meta.outputs.tags }}
