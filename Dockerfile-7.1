@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # Install PHP extensions
-RUN install-php-extensions @fix_letsencrypt @composer \
+RUN install-php-extensions -j$(nproc) @fix_letsencrypt @composer \
     bcmath \
     event \
     intl \
