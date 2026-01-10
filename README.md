@@ -1,9 +1,7 @@
-# Laradock's PHP-FPM Base Image
+# PHP-FPM Base Image
 
-[![Docker Image CI](https://github.com/laradock/php-fpm/actions/workflows/dockerimage.yml/badge.svg)](https://github.com/laradock/php-fpm/actions/workflows/dockerimage.yml)
+因为 laradock/php-fpm 仓库镜像更新不及时，古 fork 了仓库，在原仓库的基础上增加上了点自己的配置，更适合亚洲宝宝使用。
 
-[Contribution Guide](http://laradock.io/contributing/#edit-base-image).
+来自于 [Laradock php-fpm](https://github.com/laradock/php-fpm).
 
-[php-fpm Docker Hub Repository](https://hub.docker.com/r/laradock/php-fpm/)
-
-[Laradock Github Repository](https://github.com/Laradock/laradock).
+本镜像仓库地址 [Docker Hub Repository](https://hub.docker.com/r/qurge/php-fpm/)
