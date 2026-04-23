@@ -28,15 +28,9 @@ RUN install-php-extensions @fix_letsencrypt @composer \
 # PHP Basic Config
 ###########################################################################
 
-RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
-	sed -i 's/post_max_size =.*/post_max_size = 50M/g' /usr/local/etc/php/php.ini  && \
-	sed -i 's/upload_max_filesize =.*/upload_max_filesize = 50M/g' /usr/local/etc/php/php.ini  && \
-	sed -i 's/;date.timezone =.*/date.timezone = PRC/g' /usr/local/etc/php/php.ini  && \
-	sed -i 's/short_open_tag =.*/short_open_tag = On/g' /usr/local/etc/php/php.ini  && \
-	sed -i 's/;cgi.fix_pathinfo=.*/cgi.fix_pathinfo=1/g' /usr/local/etc/php/php.ini  && \
-	sed -i 's/max_execution_time =.*/max_execution_time = 300/g' /usr/local/etc/php/php.ini
-
-COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./ini/php7.4.ini /usr/local/etc/php/php.ini
+COPY ./custom.ini /usr/local/etc/php/conf.d
+COPY ./custom.pool.conf /usr/local/etc/php-fpm.d/
 
 ###########################################################################
 # Set Timezone
