@@ -12,8 +12,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 # Install PHP extensions
 ###########################################################################
 
-RUN set -eux; \
-    install-php-extensions @fix_letsencrypt @composer \
+RUN install-php-extensions @fix_letsencrypt @composer \
     bcmath \
     event \
     intl \
