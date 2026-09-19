@@ -17,9 +17,9 @@ RUN set -eux; \
 # Install PHP extensions
 ###########################################################################
 
-ARG PHP_EXTENSIONS=bcmath exif pdo_mysql mysqli pcntl
+RUN docker-php-ext-install bcmath exif pdo_mysql mysqli pcntl
 
-RUN install-php-extensions @fix_letsencrypt @composer $PHP_EXTENSIONS \
+RUN install-php-extensions @fix_letsencrypt @composer \
     event \
     sockets \
     intl \
