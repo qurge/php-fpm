@@ -6,6 +6,13 @@ RUN chmod +x /usr/local/bin/install-php-extensions
 # Set Environment Variables
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN set -eux; \
+    sed -i \
+    -e 's|deb.debian.org|archive.debian.org|g' \
+    -e 's|security.debian.org|archive.debian.org|g' \
+    -e '/bullseye-updates/d' \
+    /etc/apt/sources.list;
+
 ###########################################################################
 # Install PHP extensions
 ###########################################################################
