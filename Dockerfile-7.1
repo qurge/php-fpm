@@ -45,6 +45,8 @@ RUN install-php-extensions @fix_letsencrypt @composer \
 # 配置参考 https://github.com/aaPanel/BaoTa/blob/main/script/php_auto.sh
 
 ADD https://curl.se/ca/cacert.pem /usr/local/etc/php/ssl/php-custom-ca.pem
+RUN chmod 644 /usr/local/etc/php/ssl/php-custom-ca.pem
+
 RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini && \
     sed -i 's/^disable_functions/;disable_functions/g' $PHP_INI_DIR/php.ini && \
     sed -i 's/^memory_limit = .*/memory_limit = -1/g' $PHP_INI_DIR/php.ini && \
